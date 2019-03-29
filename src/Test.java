@@ -7,6 +7,7 @@ public class Test {
         Scanner scanner=new Scanner(System.in);
         int choice=0;
         System.out.println("Wybierz opcję:\n1.Wczytaj działania z klawiatury\n2.Wczytaj działania z pliku\n3.Wyjście");
+        String filepath="f.txt";
         choice=scanner.nextInt();
             switch (choice) {
                 case 1:
@@ -15,11 +16,13 @@ public class Test {
                     while(flag){
                         String formula= scanner.nextLine();
                         if(formula.equals("KONIEC")){
+                            formulasList.remove(0);
                             flag=false;
                             choice=0;
                             for (String f:formulasList) {
                                 OnpAlgorithm onpAlgorithm=new OnpAlgorithm();
                                 System.out.println(onpAlgorithm.convert(f));
+                                System.out.println("Wynik:"+onpAlgorithm.calculate());
 
                             }
                             break;
@@ -30,10 +33,13 @@ public class Test {
                     }
                     break;
                 case 2:
-                    System.out.println("Podaj nazwę pliku tekstowego:");
-                    String filepath=scanner.nextLine();
                     formulasList=OnpAlgorithm.loadFormulas(filepath);
                     choice=0;
+                    for (String f:formulasList) {
+                        OnpAlgorithm onpAlgorithm=new OnpAlgorithm();
+                        System.out.println(onpAlgorithm.convert(f));
+                        System.out.println("Wynik:"+onpAlgorithm.calculate());
+                    }
                     break;
                 case 0:
                     System.out.println("Wybierz opcję:\n1.Wczytaj działania z klawiatury\n2.Wczytaj działania z pliku\n3.Wyjście");

@@ -17,9 +17,10 @@ public class OnpAlgorithm {
 
     public static ArrayList<String> loadFormulas(String filepath) {
         ArrayList<String> formula = new ArrayList<>();
+        String line;
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(new File(filepath)))) {
-            while (bufferedReader.readLine() != null) {
-                formula.add(bufferedReader.readLine());
+            while ((line=bufferedReader.readLine()) != null) {
+                formula.add(line);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -59,21 +60,53 @@ public class OnpAlgorithm {
 
     public String convert(String infix) {
         StringTokenizer stringTokenizer=new StringTokenizer(infix,"+-*/^()",true);
+        String previousToken="";
         while(stringTokenizer.hasMoreTokens()){
             String s=stringTokenizer.nextToken();
             if(isOperator(s)){
-                while(!operatorsStack.isEmpty() && precedence(operatorsStack.peek())>=precedence(s)) stringBuilder.append(operatorsStack.pop());
+                while(!operatorsStack.isEmpty() && precedence(operatorsStack.peek())>=precedence(s)) stringBuilder.append(operatorsStack.pop()).append(" ");
                 operatorsStack.push(s);
             }
             else if(s.equals("(")) operatorsStack.push(s);
             else if(s.equals(")")) {
-                while(!operatorsStack.peek().equals("(")) stringBuilder.append(operatorsStack.pop());
+                while(!operatorsStack.peek().equals("(")) stringBuilder.append(operatorsStack.pop()).append(" ");
                 operatorsStack.pop();
                 }
-            else stringBuilder.append(s);
+            else stringBuilder.append(s).append(" ");
+            if (s.equals("-") && previousToken.equals("(")) stringBuilder.append("0").append(" ");
+            previousToken=s;
         }
-        while(!operatorsStack.isEmpty()) stringBuilder.append(operatorsStack.pop());
-
+        while(!operatorsStack.isEmpty()) stringBuilder.append(operatorsStack.pop()).append(" ");
+    postfix=stringBuilder.toString();
     return stringBuilder.toString();
+    }
+    public double calculate(){
+        double value=0;
+        String previousToken="";
+        Stack<Double> tempStack=new Stack<>();
+        StringTokenizer stringTokenizer=new StringTokenizer(postfix," ",false);
+        while(stringTokenizer.hasMoreTokens() && !postfix.equals("")){
+            String s=stringTokenizer.nextToken();
+            if(isOperator(s)){
+                double b=tempStack.pop();
+                double a=tempStack.pop();
+                switch(s){
+                    case "+":tempStack.push(a+b); break;
+                    case "-":tempStack.push(a-b); break;
+                    case "*":tempStack.push(a*b); break;
+                    case "/":tempStack.push(a/b); break;
+                    case "^":tempStack.push(Math.pow(a,b)); break;
+                }
+            }
+            else{
+                tempStack.push(Double.parseDouble(s));
+            }
+            previousToken=s;
+
+        }
+        if(!tempStack.isEmpty()){
+            value=tempStack.peek();
+        }
+        return value;
     }
 }
