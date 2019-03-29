@@ -1,45 +1,79 @@
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Stack;
+import java.util.StringTokenizer;
 
 public class OnpAlgorithm {
-    ArrayList<String> formula;
+    private Stack<String> operatorsStack = new Stack<>();
+    private String postfix = "";
+    private StringBuilder stringBuilder = new StringBuilder(postfix);
 
-    public OnpAlgorithm(ArrayList<String> formula){
-        this.formula=formula;
-
+    public OnpAlgorithm() {
     }
+
     public static ArrayList<String> loadFormulas(String filepath) {
-        ArrayList<String> formula=new ArrayList<>();
+        ArrayList<String> formula = new ArrayList<>();
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(new File(filepath)))) {
-        while(bufferedReader.readLine()!=null){
-            formula.add(bufferedReader.readLine());
-        }
+            while (bufferedReader.readLine() != null) {
+                formula.add(bufferedReader.readLine());
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
         return formula;
     }
 
-    public void converseFormula(){
-        ArrayDeque<String> numbersDeque=new ArrayDeque<>();
-        Stack<String> operatorsStack=new Stack<>();
-        ArrayList<String> onpFormulas=new ArrayList<>();
-        for (String s:formula ) {
-            String [] splitedString= s.split("");
-            for (int i=0;i<splitedString.length;i++){
-                if(splitedString[i].matches("/d")){
-                    numbersDeque.add(splitedString[i]);
-                }
-                if(splitedString[i].equals("(")){
-                    operatorsStack.push(splitedString[i]);
-                }
-
-            }
+    private boolean isOperator(String op) {
+        switch (op) {
+            case "+":
+            case "-":
+            case "*":
+            case "/":
+            case "^":
+                return true;
+            default:
+                return false;
         }
+    }
+
+    private int precedence(String op) {
+        switch (op) {
+            case "+":
+                return 1;
+            case "-":
+                return 1;
+            case "*":
+                return 2;
+            case "/":
+                return 2;
+            case "^":
+                return 3;
+            default:return 0;
+        }
+    }
+
+
+    public String convert(String infix) {
+        StringTokenizer stringTokenizer=new StringTokenizer(infix,"+-*/^()",true);
+        while(stringTokenizer.hasMoreTokens()){
+            String s=stringTokenizer.nextToken();
+            if(isOperator(s)){
+                while(!operatorsStack.isEmpty() && precedence(operatorsStack.peek())>=precedence(s)) stringBuilder.append(operatorsStack.pop());
+                operatorsStack.push(s);
+            }
+            else if(s.equals("(")) operatorsStack.push(s);
+            else if(s.equals(")")) {
+                while(!operatorsStack.peek().equals("(")) stringBuilder.append(operatorsStack.pop());
+                operatorsStack.pop();
+                }
+            else stringBuilder.append(s);
+        }
+        while(!operatorsStack.isEmpty()) stringBuilder.append(operatorsStack.pop());
+
+    return stringBuilder.toString();
     }
 }
