@@ -12,13 +12,10 @@ public class Test {
             switch (choice) {
                 case 1:
                     System.out.println("Wprowadź działania. Słowo KONIEC kończy wpisywanie działań");
-                    boolean flag=true;
-                    while(flag){
+                    while(true){
                         String formula= scanner.nextLine();
                         if(formula.equals("KONIEC")){
                             formulasList.remove(0);
-                            flag=false;
-                            choice=0;
                             for (String f:formulasList) {
                                 OnpAlgorithm onpAlgorithm=new OnpAlgorithm();
                                 System.out.println(onpAlgorithm.convert(f));
@@ -34,7 +31,6 @@ public class Test {
                     break;
                 case 2:
                     formulasList=OnpAlgorithm.loadFormulas(filepath);
-                    choice=0;
                     for (String f:formulasList) {
                         OnpAlgorithm onpAlgorithm=new OnpAlgorithm();
                         System.out.println(onpAlgorithm.convert(f));
