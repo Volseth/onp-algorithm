@@ -82,7 +82,6 @@ public class OnpAlgorithm {
     }
     public double calculate(){
         double value=0;
-        String previousToken="";
         Stack<Double> tempStack=new Stack<>();
         StringTokenizer stringTokenizer=new StringTokenizer(postfix," ",false);
         while(stringTokenizer.hasMoreTokens() && !postfix.equals("")){
@@ -101,8 +100,6 @@ public class OnpAlgorithm {
             else{
                 tempStack.push(Double.parseDouble(s));
             }
-            previousToken=s;
-
         }
         if(!tempStack.isEmpty()){
             value=tempStack.peek();
