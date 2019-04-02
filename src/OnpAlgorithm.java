@@ -93,7 +93,7 @@ public class OnpAlgorithm {
                     case "+":tempStack.push(a+b); break;
                     case "-":tempStack.push(a-b); break;
                     case "*":tempStack.push(a*b); break;
-                    case "/":tempStack.push(a/b); break;
+                    case "/": if(b==0) throw new IllegalArgumentException("Dzielenie przez 0"); tempStack.push(a/b); break;
                     case "^":tempStack.push(Math.pow(a,b)); break;
                 }
             }
